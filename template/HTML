@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Neon Market</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            margin: 0; background: #05070d; color: white;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .console {
+            width: 800px; padding: 30px; border-radius: 20px;
+            background: rgba(10, 15, 25, 0.9);
+            border: 2px solid {{ data.color }};
+            box-shadow: 0 0 20px {{ data.color }};
+        }
+        h1 { color: #00ff99; text-shadow: 0 0 10px #00ff99; margin: 0; }
+        .topbar { display: flex; justify-content: space-between; margin: 20px 0; font-size: 1.2rem; }
+        .market-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .card {
+            background: rgba(255, 255, 255, 0.05); padding: 15px;
+            border-radius: 12px; border: 1px solid #333; text-align: center;
+        }
+        .price { font-size: 1.5rem; color: #00ff99; margin: 10px 0; }
+        input[type="number"] {
+            width: 80%; background: #000; color: #00ff99; border: 1px solid #00ff99;
+            padding: 5px; border-radius: 5px; margin-bottom: 10px; text-align: center;
+        }
+        .btn-group { display: flex; gap: 5px; }
+        button {
+            flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer;
+            font-weight: bold; text-transform: uppercase; transition: 0.2s;
+        }
+        .buy { background: #00ff99; color: black; }
+        .sell { background: #ff004c; color: white; }
+        .wait {
+            width: 100%; margin-top: 20px; background: none; 
+            border: 1px solid #00e1ff; color: #00e1ff; padding: 15px;
+        }
+        .wait:hover { background: #00e1ff; color: black; }
+        canvas { max-height: 150px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="console">
+    <h1>NEON MARKET</h1>
+    <p style="color: {{ data.color }}; shadow: 0 0 5px {{ data.color }}">{{ data.message }}</p>
+    
+    <div class="topbar">
+        <div>CREDITS: <span style="color:#00ff99">{{ data.credits }}</span></div>
+    </div>
+
+    <!-- The Visual Graph -->
+    <canvas id="marketChart"></canvas>
+
+    <div class="market-grid">
+        {% for item_name, details in data.market.items() %}
+        <div class="card">
+            <div style="font-weight: bold;">{{ item_name }}</div>
+            <div class="price">{{ details.price }} CR</div>
+            <div style="font-size: 0.8rem; margin-bottom: 10px;">Owned: {{ data.inventory[item_name] }}</div>
+            
+            <form method="post" action="/buy/{{ item_name }}">
+                <input type="number" name="quantity" value="1" min="1">
+                <div class="btn-group">
+                    <button type="submit" class="buy">Buy</button>
+                    <button type="submit" formaction="/sell/{{ item_name }}" class="sell">Sell</button>
+                </div>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+    <form action="/wait" method="post">
+        <button class="wait">ADVANCE SYSTEM TIME (WAIT A DAY)</button>
+    </form>
+</div>
+
+<script>
+    const ctx = document.getElementById('marketChart').getContext('2d');
+    
+    // We get the history of the first item (Data Cubes) to show the general market trend
+    const chartData = {{ data.market['Data Cubes']['history'] | tojson }};
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.map((_, i) => i),
+            datasets: [{
+                label: 'Market Index',
+                data: chartData,
+                borderColor: '{{ data.color }}',
+                backgroundColor: 'rgba(0, 255, 153, 0.1)',
+                borderWidth: 3,
+                tension: 0.3,
+                fill: true,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { display: false },
+                y: { grid: { color: '#222' }, ticks: { color: '#555' } }
+            }
+        }
+    });
+</script>
+</body>
+</html>
