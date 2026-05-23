@@ -1,12 +1,11 @@
 # Neon-Stock-Market
 This is my first coding project for class. It’s a simple demo repository where I’m learning how to use GitHub, write code, and manage versions of a project.
 
-What I Learned
-How to create and use a GitHub repository
-How to make commits and track changes
-How to use GitHub Codespaces / an editor environment
-Basic coding concepts depending on the project (add what applies)
-Purpose
+What I Learned, 
+*How to create and use a GitHub repository 
+How to make commits and track changes 
+How to use GitHub Codespaces / an editor environment 
+Basic coding concepts depending on the project (add what applies) 
 
 This project is mainly for learning and practice. It’s not meant to be perfect or complete, but to show my progress as I get more comfortable with coding and GitHub.
 
